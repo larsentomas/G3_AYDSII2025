@@ -1,7 +1,6 @@
 package sistema;
 import controladores.Controlador;
 import controladores.LoginController;
-import vistas.ILogin;
 import vistas.Login;
 import vistas.VistaInicio;
 

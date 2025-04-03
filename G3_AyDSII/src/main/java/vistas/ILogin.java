@@ -1,5 +1,6 @@
 package vistas;
 
+import javax.swing.*;
 import java.awt.event.ActionListener;
 
 public interface ILogin {
@@ -8,4 +9,5 @@ public interface ILogin {
     void setActionListener(ActionListener actionListener);
     public void setVisibleVentana(boolean estado);
     public void limpiarcampos();
+    public JButton getBotonInicio();
 }

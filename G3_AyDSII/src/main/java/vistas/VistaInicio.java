@@ -114,6 +114,21 @@ public class VistaInicio extends JFrame implements IVistaInicio {
         this.setVisible(estado);
     };
 
+    public JButton getBtnNuevoContacto() {
+        return btnAgregarContacto;
+    }
+
+    public JButton getBtnNuevaConversacion() {
+        return btnAgregarChat;
+    }
+
+    public JButton getEnviarMensaje() {
+        return btnEnviar;
+    }
+
+    public String getMensaje() {
+        return this.txtf_mensaje.getText();
+    }
 
     public void limpiarcampos() {
         this.txtf_buscar.setText("");

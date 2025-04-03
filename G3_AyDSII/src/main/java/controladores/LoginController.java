@@ -9,19 +9,22 @@ import vistas.VistaInicio;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class LoginController {
+public class LoginController implements ActionListener {
     private VistaInicio vista_inicio;
     private ILogin ilogin;
 
     public LoginController(ILogin login, VistaInicio vista_inicio) {
         this.vista_inicio = vista_inicio;
         this.ilogin = login;
-
-
-        this.ilogin.setActionListener((ActionListener) this);
-
+        initController();
     }
 
+    private void initController() {
+        this.ilogin.getBotonInicio().setActionCommand("INICIAR_SESION");
+        this.ilogin.getBotonInicio().addActionListener(this);
+    }
+
+    @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getActionCommand().equalsIgnoreCase("INICIAR_SESION")) {
             MensajeriaP2P sistema = MensajeriaP2P.getInstance();
@@ -29,6 +32,8 @@ public class LoginController {
             String user = this.ilogin.getUser();
             if (sistema.iniciarSesion(user, puerto)) {
                 this.cerrarVentana();
+            } else {
+                System.out.println("Error al iniciar sesión");
             }
         }
     }

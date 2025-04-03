@@ -1,9 +1,5 @@
 package vistas;
 
-import controladores.LoginController;
-
-import java.awt.EventQueue;
-
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
@@ -92,7 +88,6 @@ public class Login extends JFrame implements ILogin{
 		
 		this.btn_inicio = new JButton("Iniciar sesión");
 		panel_3.add(btn_inicio);
-		this.btn_inicio.setActionCommand("INICIAR_SESION");
 		
 		JPanel panel_norte = new JPanel();
 		contentPane.add(panel_norte, BorderLayout.NORTH);
@@ -121,6 +116,9 @@ public class Login extends JFrame implements ILogin{
 		this.setVisible(estado);
 	};
 
+	public JButton getBotonInicio() {
+		return this.btn_inicio;
+	}
 
 	public void limpiarcampos() {
 		this.txtf_user.setText("");
