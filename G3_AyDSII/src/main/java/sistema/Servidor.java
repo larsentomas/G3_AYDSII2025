@@ -6,7 +6,7 @@ import java.net.*;
 public class Servidor {
     private int puerto;
 
-    public Servidor(int puerto) {
+    public Servidor(String direccionIP, int puerto) {
         this.puerto = puerto;
     }
 
@@ -15,7 +15,7 @@ public class Servidor {
             System.out.println("Servidor activo en el puerto: " + puerto);
 
             while (true) {
-                Socket socket = serverSocket.accept();
+                java.net.Socket socket = serverSocket.accept();
                 BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 String mensaje = in.readLine();
                 System.out.println("Mensaje recibido: " + mensaje);

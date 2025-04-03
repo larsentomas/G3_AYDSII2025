@@ -1,58 +1,70 @@
 package sistema;
-import java.util.Scanner;
+import controladores.Controlador;
+import controladores.LoginController;
+import vistas.ILogin;
+import vistas.Login;
+import vistas.VistaInicio;
+
+import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.Socket;
+import java.net.UnknownHostException;
 
 public class MensajeriaP2P {
-    public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
+    private String ip_client;
+    private Usuario user;
+    private static MensajeriaP2P instance = null;
 
-        // Configuración inicial
-        System.out.print("Ingresa tu nickname: ");
-        String nickname = scanner.nextLine();
-        System.out.print("Ingresa el puerto de comunicación: ");
-        int puerto = scanner.nextInt();
-        scanner.nextLine(); // Limpiar buffer
+    public static void main(String[] args) throws UnknownHostException {
+        try {
+            instance = MensajeriaP2P.getInstance();
+            InetAddress localHost = InetAddress.getLocalHost();
+            instance.ip_client = localHost.getHostAddress();
 
-        Usuario usuario = new Usuario(nickname, puerto);
-        Servidor servidor = new Servidor(puerto);
-        new Thread(servidor::iniciar).start();
-
-        while (true) {
-            System.out.println("1. Registrar Contacto");
-            System.out.println("2. Enviar Mensaje");
-            System.out.println("3. Listar Conversaciones Activas");
-            System.out.print("Selecciona una opción: ");
-            int opcion = scanner.nextInt();
-            scanner.nextLine(); // Limpiar buffer
-
-            switch (opcion) {
-                case 1 -> {
-                    System.out.print("Alias del contacto: ");
-                    String alias = scanner.nextLine();
-                    System.out.print("IP del contacto: ");
-                    String ip = scanner.nextLine();
-                    System.out.print("Puerto del contacto: ");
-                    int puertoContacto = scanner.nextInt();
-                    scanner.nextLine();
-
-                    Contacto contacto = new Contacto(alias, ip, puertoContacto);
-                    usuario.agregarContacto(contacto);
-                }
-                case 2 -> {
-                    System.out.print("IP del destinatario: ");
-                    String ipDestino = scanner.nextLine();
-                    System.out.print("Puerto del destinatario: ");
-                    int puertoDestino = scanner.nextInt();
-                    scanner.nextLine();
-                    System.out.print("Escribe tu mensaje: ");
-                    String mensaje = scanner.nextLine();
-
-                    Cliente cliente = new Cliente(ipDestino, puertoDestino);
-                    cliente.enviarMensaje(nickname + ": " + mensaje);
-                }
-                case 3 -> usuario.getConversaciones().forEach(conversacion ->
-                        System.out.println("Conversación activa con: " + conversacion.getContacto().getAlias()));
-                default -> System.out.println("Opción inválida");
-            }
+            VistaInicio vista_inicio = new VistaInicio();
+            Login login = new Login();
+            LoginController controlador_login = new LoginController(login, vista_inicio);
+            Controlador controlador = new Controlador(vista_inicio);
+        } catch (UnknownHostException e) {
+            System.out.println("Error al obtener la IP del cliente"); // Manejo de Errores
         }
+    }
+
+    private MensajeriaP2P() {
+    }
+
+    public static MensajeriaP2P getInstance() {
+        if (instance == null) {
+            instance = new MensajeriaP2P();
+        }
+        return instance;
+    }
+
+    public boolean verificarPuerto(int port) {
+        System.out.println("Verificando: " + this.ip_client+":"+port);
+        try (Socket socket = new Socket()) {
+            InetSocketAddress conexion = new InetSocketAddress(this.ip_client, port);
+            socket.connect(conexion, 10000);
+            return true;
+        } catch (IOException e) {
+            System.out.println("Error al verificar el puerto: " + e.getMessage());
+            return false;
+        }
+    }
+
+    public boolean iniciarSesion(String nickname,String puerto) {
+        boolean result = false;
+        if (instance.verificarPuerto(Integer.parseInt(puerto))) {
+            // TO DO: Crear instancia de Usuario y abrir vista de inicio
+            result = true;
+            System.out.println("Puerto CORRECTO");
+        } else {
+            //TO DO: Agregar mensaje y ventana de error
+            result = false;
+            System.out.println("Puerto INCORRECTO");
+        }
+        return result;
     }
 }

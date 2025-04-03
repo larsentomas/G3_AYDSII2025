@@ -1,5 +1,7 @@
 package vistas;
 
+import controladores.LoginController;
+
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
@@ -7,26 +9,28 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import java.awt.BorderLayout;
 import javax.swing.JLabel;
-import javax.swing.SwingConstants;
 import java.awt.GridLayout;
+import java.awt.event.ActionListener;
 import javax.swing.JTextField;
 import javax.swing.JButton;
 
-public class login extends JFrame {
+public class Login extends JFrame implements ILogin{
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 	private JTextField txtf_user;
-	private JTextField txtf_pass;
+	private JTextField txtf_port;
+	private	JButton btn_inicio;
 
 	/**
 	 * Launch the application.
 	 */
+	/**
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					login frame = new login();
+					Login frame = new Login();
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -34,11 +38,11 @@ public class login extends JFrame {
 			}
 		});
 	}
-
+    */
 	/**
 	 * Create the frame.
 	 */
-	public login() {
+	public Login() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
 		contentPane = new JPanel();
@@ -60,7 +64,7 @@ public class login extends JFrame {
 		JPanel panel_1 = new JPanel();
 		panel_centro.add(panel_1);
 		
-		txtf_user = new JTextField();
+		this.txtf_user = new JTextField();
 		panel_1.add(txtf_user);
 		txtf_user.setColumns(10);
 		
@@ -73,9 +77,9 @@ public class login extends JFrame {
 		JPanel panel_2 = new JPanel();
 		panel_centro.add(panel_2);
 		
-		txtf_pass = new JTextField();
-		panel_2.add(txtf_pass);
-		txtf_pass.setColumns(10);
+		this.txtf_port = new JTextField();
+		panel_2.add(txtf_port);
+		txtf_port.setColumns(10);
 		
 		JPanel panel_5 = new JPanel();
 		panel_centro.add(panel_5);
@@ -86,14 +90,41 @@ public class login extends JFrame {
 		JPanel panel_3 = new JPanel();
 		panel_centro.add(panel_3);
 		
-		JButton btn_inicio = new JButton("Iniciar sesión");
+		this.btn_inicio = new JButton("Iniciar sesión");
 		panel_3.add(btn_inicio);
+		this.btn_inicio.setActionCommand("INICIAR_SESION");
 		
 		JPanel panel_norte = new JPanel();
 		contentPane.add(panel_norte, BorderLayout.NORTH);
 		
 		JLabel lbl_title = new JLabel("Bienvenido/a!");
 		panel_norte.add(lbl_title);
+
+		setVisible(true);
+		setLocationRelativeTo(null); // Center window
 	}
 
+	@Override
+    public String getUser(){
+		return this.txtf_user.getText();
+	};
+	@Override
+    public String getPuerto(){
+		return this.txtf_port.getText();
+	};
+	@Override
+    public void setActionListener(ActionListener actionListener){
+		this.btn_inicio.addActionListener(actionListener);
+	};
+	@Override
+	public void setVisibleVentana(boolean estado){
+		this.setVisible(estado);
+	};
+
+
+	public void limpiarcampos() {
+		this.txtf_user.setText("");
+		this.txtf_port.setText("");
+
+	}
 }

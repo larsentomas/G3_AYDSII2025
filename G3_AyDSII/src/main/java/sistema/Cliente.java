@@ -1,7 +1,7 @@
 package sistema;
 
 import java.io.*;
-import java.net.*;
+import java.net.Socket;
 
 public class Cliente {
     private String direccionIP;
