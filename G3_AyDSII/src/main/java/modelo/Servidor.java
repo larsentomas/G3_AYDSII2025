@@ -1,5 +1,5 @@
 // Servidor.java
-package sistema;
+package modelo;
 
 import java.io.*;
 import java.net.*;

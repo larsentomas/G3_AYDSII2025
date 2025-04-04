@@ -1,10 +1,10 @@
 // LoginController.java
-package controladores;
+package controlador;
 
 import sistema.MensajeriaP2P;
-import sistema.Servidor;
-import vistas.Login;
-import vistas.VistaInicio;
+import modelo.Servidor;
+import vista.Login;
+import vista.VistaInicio;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

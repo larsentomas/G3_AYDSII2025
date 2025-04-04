@@ -1,4 +1,4 @@
-package sistema;
+package modelo;
 
 public class Notificacion {
     private String tipo; // Por ejemplo: "Nuevo mensaje"

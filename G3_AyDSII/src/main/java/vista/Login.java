@@ -1,4 +1,4 @@
-package vistas;
+package vista;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;

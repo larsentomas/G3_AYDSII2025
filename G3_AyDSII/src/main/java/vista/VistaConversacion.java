@@ -1,4 +1,4 @@
-package vistas;
+package vista;
 
 import java.awt.EventQueue;
 

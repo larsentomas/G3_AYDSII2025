@@ -1,6 +1,6 @@
 // Mensaje.java
 
-package sistema;
+package modelo;
 
 import java.time.LocalDateTime;
 

@@ -1,9 +1,9 @@
 // VistaInicio.java
-package vistas;
+package vista;
 
-import sistema.Contacto;
-import sistema.Conversacion;
-import sistema.Mensaje;
+import modelo.Contacto;
+import modelo.Conversacion;
+import modelo.Mensaje;
 import sistema.MensajeriaP2P;
 
 import javax.swing.*;

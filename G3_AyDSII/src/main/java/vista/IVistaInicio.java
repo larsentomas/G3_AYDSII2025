@@ -1,13 +1,10 @@
-package vistas;
+package vista;
 
-import javax.swing.*;
 import java.awt.event.ActionListener;
 
-public interface ILogin {
-    String getUser();
-    String getPuerto();
+public interface IVistaInicio {
     void setActionListener(ActionListener actionListener);
     public void setVisibleVentana(boolean estado);
     public void limpiarcampos();
-    public JButton getBotonInicio();
+
 }

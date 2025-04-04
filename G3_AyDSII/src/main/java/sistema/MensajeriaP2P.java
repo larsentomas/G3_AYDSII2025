@@ -1,10 +1,11 @@
 // MensajeriaP2P.java
 package sistema;
 
-import controladores.Controlador;
-import controladores.LoginController;
-import vistas.Login;
-import vistas.VistaInicio;
+import controlador.Controlador;
+import controlador.LoginController;
+import modelo.*;
+import vista.Login;
+import vista.VistaInicio;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;

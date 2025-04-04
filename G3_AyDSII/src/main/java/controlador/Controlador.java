@@ -1,9 +1,9 @@
-package controladores;
+package controlador;
 
-import sistema.Contacto;
-import sistema.Conversacion;
+import modelo.Contacto;
+import modelo.Conversacion;
 import sistema.MensajeriaP2P;
-import vistas.VistaInicio;
+import vista.VistaInicio;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

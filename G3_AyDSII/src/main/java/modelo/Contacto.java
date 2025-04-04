@@ -1,4 +1,4 @@
-package sistema;
+package modelo;
 
 public class Contacto extends Usuario{
 
