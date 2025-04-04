@@ -23,4 +23,9 @@ public class Conversacion {
     public void agregarMensaje(Mensaje mensaje) {
         mensajes.add(mensaje);
     }
+
+    @Override
+    public String toString() {
+        return contacto.getNickname();
+    }
 }

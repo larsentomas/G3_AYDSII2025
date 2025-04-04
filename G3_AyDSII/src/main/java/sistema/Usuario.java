@@ -1,39 +1,33 @@
-package sistema;
+// Base para clientes y contactos
 
-import java.util.ArrayList;
-import java.util.List;
+package sistema;
 
 public class Usuario {
     private String nickname;
+    private String ip;
     private int puerto;
-    private List<Contacto> contactos;
-    private List<Conversacion> conversaciones;
 
-    public Usuario(String nickname, int puerto) {
-        this.nickname = nickname;
+    public Usuario(String alias, String ip_client, int puerto) {
+        this.nickname = alias;
+        this.ip = ip_client;
         this.puerto = puerto;
-        this.contactos = new ArrayList<>();
-        this.conversaciones = new ArrayList<>();
     }
 
-    public String getNickname() {
-        return nickname;
+    public String getIp() {
+        return ip;
     }
 
     public int getPuerto() {
         return puerto;
     }
 
-    public void agregarContacto(Contacto contacto) {
-        contactos.add(contacto);
-        System.out.println("Contacto registrado exitosamente: " + contacto.getAlias());
+    public String getNickname() {
+        return nickname;
     }
 
-    public List<Contacto> getContactos() {
-        return contactos;
+    @Override
+    public String toString() {
+        return nickname + "(" + ip + ':' + puerto + ')';
     }
 
-    public List<Conversacion> getConversaciones() {
-        return conversaciones;
-    }
 }

@@ -1,8 +1,8 @@
 package controladores;
 
+import sistema.Contacto;
+import sistema.Conversacion;
 import sistema.MensajeriaP2P;
-import vistas.Login;
-import vistas.VistaConversacion;
 import vistas.VistaInicio;
 
 import java.awt.event.ActionEvent;
@@ -20,38 +20,36 @@ public class Controlador implements ActionListener  {
     private void initController() {
         this.vista_inicio.getBtnNuevaConversacion().setActionCommand("NUEVA_CONVERSACION");
         this.vista_inicio.getBtnNuevaConversacion().addActionListener(this);
-        this.vista_inicio.getBtnNuevoContacto().setActionCommand("AGREGAR_CONTACTO");
-        this.vista_inicio.getBtnNuevaConversacion().addActionListener(this);
+        this.vista_inicio.getBtnNuevoContacto().setActionCommand("MOSTRAR_AGREGAR_CONTACTO");
+        this.vista_inicio.getBtnNuevoContacto().addActionListener(this);
         this.vista_inicio.getEnviarMensaje().setActionCommand("ENVIAR_MENSAJE");
         this.vista_inicio.getEnviarMensaje().addActionListener(this);
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (e.getActionCommand().equalsIgnoreCase("AGREGAR_CONTACTO")) {
-            System.out.println("Agregar contacto");
-            /*
-            POR MODAL
-            String nombre = this.vista_inicio.getNombreContacto();
-            String ip_contacto = this.vista_inicio.getIpContacto();
-            String puerto_comunicacion = this.vista_inicio.getPuertoComunicacionContacto();
-            */
-        }
-        else if (e.getActionCommand().equalsIgnoreCase("NUEVA_CONVERSACION")) {
-            System.out.println("Crear nueva conversacion");
-            MensajeriaP2P sistema = MensajeriaP2P.getInstance();
-            /*
-            POR MODAL
-            String contacto = this.vista_inicio.getContacto()
-
-            * */
+        if (e.getActionCommand().equalsIgnoreCase("NUEVA_CONVERSACION")) {
+            Contacto contacto = vista_inicio.mostrarModalNuevaConversacion();
+            if (contacto != null) {
+                MensajeriaP2P.getInstance().crearConversacion(contacto);
+                vista_inicio.actualizarListaConversaciones();
+            }
         }
         else if (e.getActionCommand().equalsIgnoreCase("ENVIAR_MENSAJE")) {
-            System.out.println("Enviar mensaje");
-            /*
             String mensaje = this.vista_inicio.getMensaje();
-            String contacto = this.vista_inicio.getContactoConversacion();
-            * */
+            Conversacion conversacion = this.vista_inicio.getConversacionSeleccionada();
+            if (conversacion != null && mensaje != null && !mensaje.trim().isEmpty()) {
+                MensajeriaP2P.getInstance().enviarMensaje(mensaje, conversacion);
+                vista_inicio.actualizarPanelChat(conversacion);
+            }
+        } else if (e.getActionCommand().equalsIgnoreCase("MOSTRAR_AGREGAR_CONTACTO")) {
+            String[] contactoInfo = vista_inicio.mostrarModalAgregarContacto();
+            if (contactoInfo != null) {
+                String nickname = contactoInfo[0];
+                String ip = contactoInfo[1];
+                String puerto = contactoInfo[2];
+                MensajeriaP2P.getInstance().agregarContacto(nickname, ip, Integer.parseInt(puerto));
+            }
         }
 
     }
