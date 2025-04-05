@@ -7,6 +7,8 @@ import modelo.*;
 import vista.VistaLogin;
 import vista.VistaInicio;
 
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
@@ -23,6 +25,18 @@ public class MensajeriaP2P {
 
         controladorLogin = new LoginControlador(vistaLogin, vistaInicio);
         controlador = new Controlador(vistaInicio);
+
+        vistaInicio.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                if (instance.getUser() != null) {
+                    for (Conversacion conversacion : instance.getUser().getConversaciones()) {
+                        MensajeriaP2P.getInstance().enviarMensaje(conversacion, "", false);
+                    }
+
+                }
+            }
+        });
 
     }
 
@@ -66,8 +80,11 @@ public class MensajeriaP2P {
         usuarioLogueado.agregarContacto(newUsuario);
     }
 
-    public void enviarMensaje(Conversacion c, String mensaje) {
-        Mensaje m = new Mensaje(usuarioLogueado, mensaje);
+    public void enviarMensaje(Conversacion c, String mensaje, boolean esActiva) {
+        Mensaje m;
+        if (!esActiva)  m = new Mensaje(usuarioLogueado, mensaje, false);
+        else m = new Mensaje(usuarioLogueado, mensaje);
+
         new Thread(new RecibidorMensajes(c.getUsuario().getIp(), c.getUsuario().getPuerto(), m)).start();
         c.agregarMensaje(m);
         MensajeriaP2P.getInstance().getVistaInicio().actualizarPanelChat(c);
@@ -76,34 +93,49 @@ public class MensajeriaP2P {
     public void recibirMensaje(Mensaje mensajito) {
         Conversacion c = null;
 
-        // Si no lo tengo agendado --> creo conversacion y lo agendo
-        Usuario remitente = existeUsuario(mensajito.getEmisor().getIp(), mensajito.getEmisor().getPuerto());
-        if (remitente == null) {
-            usuarioLogueado.agregarContacto(mensajito.getEmisor());
-            c = usuarioLogueado.crearConversacion(mensajito.getEmisor());
+        if (mensajito.isActiva()) {
+            // Si no lo tengo agendado --> creo conversacion y lo agendo
+            Usuario remitente = existeUsuario(mensajito.getEmisor().getIp(), mensajito.getEmisor().getPuerto());
+            if (remitente == null) {
+                usuarioLogueado.agregarContacto(mensajito.getEmisor());
+                c = usuarioLogueado.crearConversacion(mensajito.getEmisor());
+            } else {
+                // Busco si existe conversacion
+                for (Conversacion conversacion : usuarioLogueado.getConversaciones()) {
+                    if (conversacion.getUsuario().equals(remitente)) {
+                        c = conversacion;
+                        break;
+                    }
+                }
+
+                if (c == null) {
+                    // Si no existe conversacion, la creo
+                    c = usuarioLogueado.crearConversacion(mensajito.getEmisor());
+                }
+            }
+
+            // Agrego el mensaje a la conversacion
+            c.agregarMensaje(mensajito);
+
+            MensajeriaP2P.getInstance().getVistaInicio().actualizarListaConversaciones();
+            MensajeriaP2P.getInstance().getVistaInicio().actualizarPanelChat(c);
         } else {
-            // Busco si existe conversacion
+            // Desactivar conversacion
             for (Conversacion conversacion : usuarioLogueado.getConversaciones()) {
-                if (conversacion.getUsuario().equals(remitente)) {
+                if (conversacion.getUsuario().getIp().equals(mensajito.getEmisor().getIp()) &&
+                        conversacion.getUsuario().getPuerto() == mensajito.getEmisor().getPuerto()) {
                     c = conversacion;
                     break;
                 }
             }
-
-            if (c == null) {
-                // Si no existe conversacion, la creo
-                c = usuarioLogueado.crearConversacion(mensajito.getEmisor());
-            }
+            assert c != null;
+            c.setActiva(false);
+            MensajeriaP2P.getInstance().getVistaInicio().actualizarListaConversaciones();
+            MensajeriaP2P.getInstance().getVistaInicio().actualizarPanelChat(c);
         }
-
-        // Agrego el mensaje a la conversacion
-        c.agregarMensaje(mensajito);
-
-        MensajeriaP2P.getInstance().getVistaInicio().actualizarListaConversaciones();
-        MensajeriaP2P.getInstance().getVistaInicio().actualizarPanelChat(c);
     }
 
-    private Usuario existeUsuario(String ip, int puerto) {
+    public Usuario existeUsuario(String ip, int puerto) {
         Usuario usuario = null;
 
         for (Usuario posible : this.getUser().getContactos()) {

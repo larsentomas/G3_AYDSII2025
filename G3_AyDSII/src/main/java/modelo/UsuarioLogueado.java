@@ -36,7 +36,7 @@ public class UsuarioLogueado extends Usuario implements Serializable {
             for (Usuario usuario : contactos) {
                 boolean tieneConversacion = false;
                 for (Conversacion conversacion : conversaciones) {
-                    if (conversacion.getUsuario().equals(usuario)) {
+                    if (conversacion.getUsuario().getIp().equals(usuario.getIp()) && conversacion.getUsuario().getPuerto() == usuario.getPuerto()) {
                         tieneConversacion = true;
                         break;
                     }
@@ -55,6 +55,12 @@ public class UsuarioLogueado extends Usuario implements Serializable {
         Conversacion conversacion = new Conversacion(usuario);
         this.agregarConversacion(conversacion);
         return conversacion;
+    }
+
+    public void desactivarConversaciones() {
+        for (Conversacion conversacion : conversaciones) {
+            conversacion.setActiva(false);
+        }
     }
 
     public ArrayList<Usuario> getContactos() {

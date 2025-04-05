@@ -58,7 +58,7 @@ public class Controlador implements ActionListener  {
             // Validar que haya una conversación activa
             Conversacion conversacion = vista_inicio.getConversacionActiva();
             if (conversacion != null) {
-                sistema.enviarMensaje(conversacion, mensaje);
+                sistema.enviarMensaje(conversacion, mensaje, true);
                 vista_inicio.limpiarcampos();
             } else {
                 vista_inicio.mostrarModalError("No hay conversación seleccionada.");

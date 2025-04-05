@@ -5,12 +5,14 @@ import java.util.ArrayList;
 
 public class Conversacion implements Serializable {
     private Usuario usuario;
+    private boolean activa;
 
     private ArrayList<Mensaje> mensajes;
 
     public Conversacion(Usuario usuario) {
         this.usuario = usuario;
         this.mensajes = new ArrayList<>();
+        this.activa = true;
     }
 
     public void agregarMensaje(Mensaje mensaje) {
@@ -31,6 +33,14 @@ public class Conversacion implements Serializable {
 
     public void setMensajes(ArrayList<Mensaje> mensajes) {
         this.mensajes = mensajes;
+    }
+
+    public boolean isActiva() {
+        return activa;
+    }
+
+    public void setActiva(boolean activa) {
+        this.activa = activa;
     }
 
     @Override

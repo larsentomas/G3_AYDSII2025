@@ -10,6 +10,8 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 
 public class VistaInicio extends JFrame implements IVistaInicio {
@@ -138,12 +140,15 @@ public class VistaInicio extends JFrame implements IVistaInicio {
 
     public void actualizarPanelChat(Conversacion conversacion) {
         lista_chat.removeAll();
+        Usuario usuarioAgendado = MensajeriaP2P.getInstance().existeUsuario(conversacion.getUsuario().getIp(), conversacion.getUsuario().getPuerto());
         for (Mensaje mensaje : conversacion.getMensajes()) {
-            lista_chat.add(mensaje.toString());
+            lista_chat.add("[" + mensaje.getTimestamp().getTime() + "]" + usuarioAgendado.getNickname() + ":" + mensaje.toString());
         }
         lista_chat.revalidate();
         lista_chat.repaint();
         setConversacion(conversacion);
+        btnEnviar.setEnabled(conversacion.isActiva());
+        txtf_mensaje.setEnabled(conversacion.isActiva());
     }
 
     public void actualizarListaConversaciones() {
