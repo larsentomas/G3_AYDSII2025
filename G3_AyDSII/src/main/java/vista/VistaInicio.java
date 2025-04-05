@@ -28,17 +28,12 @@ public class VistaInicio extends JFrame implements IVistaInicio {
     private List lista_chat;
     private JList listaConversaciones;
     private DefaultListModel<Conversacion> listModelConversaciones;
-    private JTextField mensajeField;
-    private JButton enviarButton;
     private Conversacion conversacion;
 
     public VistaInicio() {
-        // Initialize components
-        mensajeField = new JTextField();
-        enviarButton = new JButton("Enviar");
-
+        // Initialize componente
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setBounds(100, 100, 450, 300);
+        setBounds(100, 100, 1200, 800);
         contentPane = new JPanel();
         contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 
