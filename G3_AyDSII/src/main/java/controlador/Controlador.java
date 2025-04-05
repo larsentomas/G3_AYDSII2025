@@ -7,6 +7,7 @@ import vista.VistaInicio;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 
 public class Controlador implements ActionListener  {
     private VistaInicio vista_inicio;
@@ -28,10 +29,16 @@ public class Controlador implements ActionListener  {
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        MensajeriaP2P sistema = MensajeriaP2P.getInstance();
         if (e.getActionCommand().equalsIgnoreCase("NUEVA_CONVERSACION")) {
             Contacto contacto = vista_inicio.mostrarModalNuevaConversacion();
             if (contacto != null) {
-                MensajeriaP2P.getInstance().crearConversacion(contacto);
+                //Revisar si este try catch esta bien aca
+                try {
+                    sistema.crearConversacion(contacto);
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
                 vista_inicio.actualizarListaConversaciones();
             }
         }
@@ -39,7 +46,7 @@ public class Controlador implements ActionListener  {
             String mensaje = this.vista_inicio.getMensaje();
             Conversacion conversacion = this.vista_inicio.getConversacionSeleccionada();
             if (conversacion != null && mensaje != null && !mensaje.trim().isEmpty()) {
-                MensajeriaP2P.getInstance().enviarMensaje(mensaje, conversacion);
+                //Enviar mensaje
                 vista_inicio.actualizarPanelChat(conversacion);
             }
         } else if (e.getActionCommand().equalsIgnoreCase("MOSTRAR_AGREGAR_CONTACTO")) {
@@ -48,7 +55,7 @@ public class Controlador implements ActionListener  {
                 String nickname = contactoInfo[0];
                 String ip = contactoInfo[1];
                 String puerto = contactoInfo[2];
-                MensajeriaP2P.getInstance().agregarContacto(nickname, ip, Integer.parseInt(puerto));
+                sistema.agregarContacto(nickname, ip, Integer.parseInt(puerto));
             }
         }
 

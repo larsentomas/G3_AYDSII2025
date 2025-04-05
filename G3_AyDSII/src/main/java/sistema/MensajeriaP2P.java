@@ -13,26 +13,19 @@ import java.net.*;
 import java.util.ArrayList;
 
 public class MensajeriaP2P {
-    private String ip_client;
     private Cliente user;
     private static MensajeriaP2P instance = null;
 
-    public static void main(String[] args) throws UnknownHostException {
-        try {
-            instance = MensajeriaP2P.getInstance();
-            InetAddress localHost = InetAddress.getLocalHost();
-            instance.ip_client = localHost.getHostAddress();
+    public static void main(String[] args){
+        instance = MensajeriaP2P.getInstance();
 
-            VistaInicio vista_inicio = new VistaInicio();
-            Login login = new Login();
-            LoginController controlador_login = new LoginController(login, vista_inicio);
-            Controlador controlador = new Controlador(vista_inicio);
+        VistaInicio vistaInicio = new VistaInicio();
+        Login login = new Login();
+        LoginController controladorLogin = new LoginController(login, vistaInicio);
+        Controlador controlador = new Controlador(vistaInicio);
 
-            // Copilot pero tengo entendido que no funciona porque no me llegan los mensajes
-            instance.iniciarServidor(5000, vista_inicio); // Use the appropriate port
-        } catch (UnknownHostException e) {
-            System.out.println("Error al obtener la IP del cliente");
-        }
+        // Copilot pero tengo entendido que no funciona porque no me llegan los mensajes
+        instance.iniciarServidor(5000, vistaInicio); // Use the appropriate port
     }
 
     private MensajeriaP2P() {
@@ -43,6 +36,22 @@ public class MensajeriaP2P {
             instance = new MensajeriaP2P();
         }
         return instance;
+    }
+
+    public boolean iniciarSesion(String nickname, String puerto) throws UnknownHostException {
+        try {
+            boolean result = false;
+            InetAddress localHost = InetAddress.getLocalHost();
+            if (instance.verificarPuerto(Integer.parseInt(puerto))) {
+                this.user = new Cliente(nickname, localHost.getHostAddress(), Integer.parseInt(puerto));
+                result = true;
+            }
+            //Asignar algún mensaje de error significativo si el puerto está ocupado/fuera de rango,etc
+            return result;
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
 
@@ -58,16 +67,17 @@ public class MensajeriaP2P {
         return contacto;
     }
 
-    public Conversacion crearConversacion(Contacto contacto) {
-        Conversacion conv = new Conversacion(contacto);
-        this.user.getConversaciones().add(conv);
-        System.out.println("Conversacion creada con " + contacto.getNickname());
+    public Conversacion crearConversacion(Contacto contacto) throws IOException {
+        try{
+            Conversacion conv = new Conversacion(contacto, this.user);
+            this.user.getConversaciones().add(conv);
+            System.out.println("Conversacion creada con " + contacto.getNickname());
 
-        // Notificar al contacto que se creo una conversacion con el
-        Mensaje mensaje = new Mensaje(this.user, "Nueva conversacion creada", true);
-        user.enviarMensaje(mensaje, contacto);
-
-        return conv;
+            // Notificar al contacto que se creo una conversacion con el
+            return conv;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     // Chequea si el mensaje recibido es verdaderamente un mensaje o una alerta de que se creo una conversacion
@@ -77,9 +87,9 @@ public class MensajeriaP2P {
             // Crea conversacion si no existe (no deberia)
             if (conversacion == null) {
                 Usuario tipito = mensaje.getRemitente();
-                Contacto contacto_tipito = new Contacto(tipito.getNickname(), tipito.getIp(), tipito.getPuerto());
-                conversacion = new Conversacion(contacto_tipito);
-                this.user.getConversaciones().add(conversacion);
+                Contacto contactoTipito = new Contacto(tipito.getNickname(), tipito.getIp(), tipito.getPuerto());
+//                conversacion = new Conversacion(contactoTipito);
+//                this.user.getConversaciones().add(conversacion);
                 System.out.println("Conversacion creada con " + mensaje.getRemitente().getNickname());
             }
         } else {
@@ -88,16 +98,6 @@ public class MensajeriaP2P {
                 conversacion.agregarMensaje(mensaje);
                 vi.actualizarPanelChat(conversacion);
             }
-        }
-    }
-
-    public void enviarMensaje(String mensaje, Conversacion conversacion) {
-        if (this.user.getConversaciones().contains(conversacion)) {
-            Mensaje m = new Mensaje(this.user, mensaje);
-            user.enviarMensaje(m, conversacion.getContacto());
-            conversacion.agregarMensaje(m);
-        } else {
-            System.out.println("Error al enviar el mensaje");
         }
     }
 
@@ -116,27 +116,15 @@ public class MensajeriaP2P {
 
     // Esta es solo para verficiar el puerto del usuario cuando inicia sesion
     public boolean verificarPuerto(int port) {
-        System.out.println("Verificando: " + this.ip_client+":"+port);
+        String ipClient = this.user.getIp();
         try (Socket socket = new Socket()) {
-            InetSocketAddress conexion = new InetSocketAddress(this.ip_client, port);
+            InetSocketAddress conexion = new InetSocketAddress(ipClient, port);
             socket.connect(conexion, 10000);
             return true;
         } catch (IOException e) {
             System.out.println("Error al verificar el puerto: " + e.getMessage());
             return false;
         }
-    }
-
-    public boolean iniciarSesion(String nickname, String puerto) {
-        boolean result = false;
-        if (instance.verificarPuerto(Integer.parseInt(puerto))) {
-            this.user = new Cliente(nickname, this.ip_client, Integer.parseInt(puerto));
-            result = true;
-            System.out.println("Puerto CORRECTO");
-        } else {
-            System.out.println("Puerto INCORRECTO");
-        }
-        return result;
     }
 
     public ArrayList<Object> getContactosSinConversacion() {

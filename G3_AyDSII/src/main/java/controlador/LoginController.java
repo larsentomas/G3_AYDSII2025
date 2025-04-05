@@ -8,6 +8,7 @@ import vista.VistaInicio;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.net.UnknownHostException;
 
 public class LoginController {
     private Login login;
@@ -27,15 +28,13 @@ public class LoginController {
                 if ("INICIAR_SESION".equals(e.getActionCommand())) {
                     String user = login.getUser();
                     String puerto = login.getPuerto();
-                    if (MensajeriaP2P.getInstance().iniciarSesion(user, puerto)) {
-                        // Iniciar el servidor para recibir mensajes
-                        new Thread(() -> {
-                            Servidor servidor = new Servidor(Integer.parseInt(puerto));
-                            servidor.iniciar();
-                        }).start();
-                        // Mostrar la ventana de inicio
-                        vistaInicio.setVisible(true);
-                        login.setVisible(false);
+                    try {
+                        if (MensajeriaP2P.getInstance().iniciarSesion(user, puerto)) {
+                            vistaInicio.setVisible(true);
+                            login.setVisible(false);
+                        }
+                    } catch (UnknownHostException ex) {
+                        throw new RuntimeException(ex);
                     }
                 }
             }
