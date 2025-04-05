@@ -1,51 +1,40 @@
 package modelo;
 
-import java.io.IOException;
-import java.net.InetSocketAddress;
-import java.net.Socket;
+import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.List;
 
-public class Conversacion {
-    private Contacto contacto;
-    private List<Mensaje> mensajes;
-    private Socket socketEnvio;
-    private Socket socketRecepcion;
+public class Conversacion implements Serializable {
+    private Usuario usuario;
 
-    public Conversacion(Contacto contacto, Cliente user) throws IOException {
-        try {
-            this.contacto = contacto;
-            this.mensajes = new ArrayList<>();
-            this.socketEnvio =  new Socket(this.contacto.getIp(), this.contacto.getPuerto());
-            this.socketRecepcion = new Socket(user.getIp(), user.getPuerto());
-        } catch (Exception e) {
-            System.err.println("Error al obtener la dirección IP del socket de recepción: " + e.getMessage());
-        }
+    private ArrayList<Mensaje> mensajes;
 
-    }
-
-    public Contacto getContacto() {
-        return contacto;
-    }
-
-    public List<Mensaje> getMensajes() {
-        return mensajes;
+    public Conversacion(Usuario usuario) {
+        this.usuario = usuario;
+        this.mensajes = new ArrayList<>();
     }
 
     public void agregarMensaje(Mensaje mensaje) {
         mensajes.add(mensaje);
     }
 
-    public Socket getEnvio() {
-        return socketEnvio;
+    public ArrayList<Mensaje> getMensajes() {
+        return mensajes;
     }
 
-    public Socket getRecepcion() {
-        return socketRecepcion;
+    public Usuario getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
+    }
+
+    public void setMensajes(ArrayList<Mensaje> mensajes) {
+        this.mensajes = mensajes;
     }
 
     @Override
     public String toString() {
-        return contacto.getNickname();
+        return usuario.toString();
     }
 }

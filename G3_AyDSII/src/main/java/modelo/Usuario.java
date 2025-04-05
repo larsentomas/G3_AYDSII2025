@@ -1,16 +1,20 @@
-// Base para clientes y contactos
-
 package modelo;
 
-public class Usuario {
+import java.io.Serializable;
+
+public class Usuario implements Serializable {
     private String nickname;
     private String ip;
     private int puerto;
 
-    public Usuario(String alias, String ip_client, int puerto) {
-        this.nickname = alias;
-        this.ip = ip_client;
+    public Usuario(String nickname, String ip, int puerto) {
+        this.nickname = nickname;
+        this.ip = ip;
         this.puerto = puerto;
+    }
+
+    public String getNickname() {
+        return nickname;
     }
 
     public String getIp() {
@@ -21,13 +25,22 @@ public class Usuario {
         return puerto;
     }
 
-    public String getNickname() {
-        return nickname;
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
+    public void setIp(String ip) {
+        this.ip = ip;
+    }
+
+    public void setPuerto(int puerto) {
+        this.puerto = puerto;
     }
 
     @Override
     public String toString() {
-        return nickname + "(" + ip + ':' + puerto + ')';
+        return nickname + '(' +
+                ip + ':' +
+                puerto + ')';
     }
-
 }

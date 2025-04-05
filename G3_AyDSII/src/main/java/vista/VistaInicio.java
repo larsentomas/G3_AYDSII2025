@@ -1,7 +1,7 @@
 // VistaInicio.java
 package vista;
 
-import modelo.Contacto;
+import modelo.Usuario;
 import modelo.Conversacion;
 import modelo.Mensaje;
 import sistema.MensajeriaP2P;
@@ -9,7 +9,6 @@ import sistema.MensajeriaP2P;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
@@ -36,15 +35,6 @@ public class VistaInicio extends JFrame implements IVistaInicio {
         mensajeField = new JTextField();
         enviarButton = new JButton("Enviar");
 
-        enviarButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String mensaje = mensajeField.getText();
-                MensajeriaP2P.getInstance().enviarMensaje(mensaje, conversacion);
-                mensajeField.setText("");
-            }
-        });
-
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setBounds(100, 100, 450, 300);
         contentPane = new JPanel();
@@ -68,7 +58,6 @@ public class VistaInicio extends JFrame implements IVistaInicio {
             if (!e.getValueIsAdjusting()) {
                 Conversacion selectedConversacion = (Conversacion) listaConversaciones.getSelectedValue();
                 if (selectedConversacion != null) {
-                    setConversacion(selectedConversacion);
                     actualizarPanelChat(selectedConversacion);
                 }
             }
@@ -107,7 +96,7 @@ public class VistaInicio extends JFrame implements IVistaInicio {
         this.btnAgregarChat = new JButton("Nueva conversacion");
         panel_botones.add(this.btnAgregarChat);
 
-        this.btnAgregarContacto = new JButton("Agregar Contacto");
+        this.btnAgregarContacto = new JButton("Agregar Usuario");
         panel_botones.add(this.btnAgregarContacto);
 
         this.btnLoguout = new JButton("Cerrar Sesión");
@@ -123,22 +112,6 @@ public class VistaInicio extends JFrame implements IVistaInicio {
 
         this.btnBuscar = new JButton("buscar");
         panel_norte.add(this.btnBuscar);
-    }
-
-    public void actualizarPanelChat(Conversacion conversacion) {
-        lista_chat.removeAll();
-        for (Mensaje mensaje : conversacion.getMensajes()) {
-            lista_chat.add(mensaje.toString());
-        }
-        lista_chat.revalidate();
-        lista_chat.repaint();
-    }
-
-    public void actualizarListaConversaciones() {
-        listModelConversaciones.clear();
-        for (Conversacion conversacion : MensajeriaP2P.getInstance().getUser().getConversaciones()) {
-            listModelConversaciones.addElement(conversacion);
-        }
     }
 
     @Override
@@ -161,6 +134,27 @@ public class VistaInicio extends JFrame implements IVistaInicio {
         this.txtf_mensaje.setText("");
     }
 
+    // Manejo de conversaciones
+
+    public void actualizarPanelChat(Conversacion conversacion) {
+        lista_chat.removeAll();
+        for (Mensaje mensaje : conversacion.getMensajes()) {
+            lista_chat.add(mensaje.toString());
+        }
+        lista_chat.revalidate();
+        lista_chat.repaint();
+        setConversacion(conversacion);
+    }
+
+    public void actualizarListaConversaciones() {
+        listModelConversaciones.clear();
+        for (Conversacion conversacion : MensajeriaP2P.getInstance().getUser().getConversaciones()) {
+            listModelConversaciones.addElement(conversacion);
+        }
+    }
+
+
+    // Getters y Setters
     public JButton getBtnNuevoContacto() {
         return btnAgregarContacto;
     }
@@ -177,19 +171,21 @@ public class VistaInicio extends JFrame implements IVistaInicio {
         return this.txtf_mensaje.getText();
     }
 
-    public void limpiarCampos() {
-        this.txtf_buscar.setText("");
-        this.txtf_mensaje.setText("");
+    public Conversacion getConversacionActiva() {
+        return this.conversacion;
     }
 
     public void setConversacion(Conversacion conversacion) {
         this.conversacion = conversacion;
     }
 
-    public Contacto mostrarModalNuevaConversacion() {
-        ArrayList<Object> contactosSinConversacion = MensajeriaP2P.getInstance().getContactosSinConversacion();
-        Contacto[] opciones = contactosSinConversacion.toArray(new Contacto[0]);
-        return (Contacto) JOptionPane.showInputDialog(
+
+    // Modales
+
+    public Usuario mostrarModalNuevaConversacion() {
+        ArrayList<Usuario> contactosSinConversacion = MensajeriaP2P.getInstance().getUser().getContactosSinConversacion();
+        Usuario[] opciones = contactosSinConversacion.toArray(new Usuario[0]);
+        return (Usuario) JOptionPane.showInputDialog(
                 this,
                 "Seleccione un contacto para iniciar una nueva conversación:",
                 "Nueva Conversación",
@@ -211,7 +207,7 @@ public class VistaInicio extends JFrame implements IVistaInicio {
                 "Puerto:", puertoField
         };
 
-        int option = JOptionPane.showConfirmDialog(this, message, "Agregar Contacto", JOptionPane.OK_CANCEL_OPTION);
+        int option = JOptionPane.showConfirmDialog(this, message, "Agregar Usuario", JOptionPane.OK_CANCEL_OPTION);
         if (option == JOptionPane.OK_OPTION) {
             return new String[]{nombreField.getText(), ipField.getText(), puertoField.getText()};
         } else {
@@ -219,8 +215,9 @@ public class VistaInicio extends JFrame implements IVistaInicio {
         }
     }
 
-    public Conversacion getConversacionSeleccionada() {
-        return (Conversacion) listaConversaciones.getSelectedValue();
+    public void mostrarModalError(String s) {
+        JOptionPane.showMessageDialog(this, s, "Error", JOptionPane.ERROR_MESSAGE);
     }
+
 }
 

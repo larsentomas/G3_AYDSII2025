@@ -10,7 +10,7 @@ import java.awt.event.ActionListener;
 import javax.swing.JTextField;
 import javax.swing.JButton;
 
-public class Login extends JFrame implements ILogin{
+public class VistaLogin extends JFrame implements ILogin{
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
@@ -26,7 +26,7 @@ public class Login extends JFrame implements ILogin{
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					Login frame = new Login();
+					VistaLogin frame = new VistaLogin();
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -38,7 +38,7 @@ public class Login extends JFrame implements ILogin{
 	/**
 	 * Create the frame.
 	 */
-	public Login() {
+	public VistaLogin() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
 		contentPane = new JPanel();
@@ -124,5 +124,9 @@ public class Login extends JFrame implements ILogin{
 		this.txtf_user.setText("");
 		this.txtf_port.setText("");
 
+	}
+
+	public void mostrarModalError(String s) {
+		javax.swing.JOptionPane.showMessageDialog(this, s, "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
 	}
 }
