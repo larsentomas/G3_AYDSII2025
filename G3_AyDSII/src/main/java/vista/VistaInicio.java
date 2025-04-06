@@ -190,7 +190,7 @@ public class VistaInicio extends JFrame implements IVistaInicio {
         lista_chat.removeAll();
         Usuario usuarioAgendado = MensajeriaP2P.getInstance().existeUsuario(conversacion.getUsuario().getIp(), conversacion.getUsuario().getPuerto());
         for (Mensaje mensaje : conversacion.getMensajes()) {
-            lista_chat.add("[" + mensaje.getTimestamp().getTime() + "]" + usuarioAgendado.getNickname() + ":\n" + mensaje.toString());
+            lista_chat.add("[" + mensaje.getTimestamp().getTime() + "]" + mensaje.getEmisor().getNickname() + ":\n" + mensaje.toString());
         }
         lista_chat.revalidate();
         lista_chat.repaint();
@@ -322,5 +322,9 @@ public class VistaInicio extends JFrame implements IVistaInicio {
         this.lblCartelBienvenida.setText("Bienvenido/a  "+ nombre);
        // this.lblCartelBienvenida.setFont(new Font("Arial", Font.BOLD, 20));
        // this.lblCartelBienvenida.setForeground(Color.BLUE);
+    }
+
+    public JButton getBtnLoguout() {
+        return btnLoguout;
     }
 }

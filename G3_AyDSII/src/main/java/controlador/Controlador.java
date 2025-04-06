@@ -26,7 +26,8 @@ public class Controlador implements ActionListener  {
         this.vista_inicio.getEnviarMensaje().setActionCommand("ENVIAR_MENSAJE");
         this.vista_inicio.getEnviarMensaje().addActionListener(this);
         this.vista_inicio.setPanelchat(false);
-
+        this.vista_inicio.getBtnLoguout().setActionCommand("LOGOUT");
+        this.vista_inicio.getBtnLoguout().addActionListener(this);
     }
 
     @Override
@@ -75,8 +76,12 @@ public class Controlador implements ActionListener  {
 
                 if (!sistema.agendarContacto(nickname, ip, Integer.parseInt(puerto))) {
                     vista_inicio.mostrarModalError("Error al agregar contacto");
+                    vista_inicio.mostrarModalAgregarContacto();
                 }
             }
+        } else if (e.getActionCommand().equalsIgnoreCase("LOGOUT")) {
+            sistema.cerrarSesion();
+            vista_inicio.setVisible(false);
         }
 
     }

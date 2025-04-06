@@ -38,10 +38,7 @@ public class MensajeriaP2P {
             @Override
             public void windowClosing(WindowEvent e) {
                 if (instance.getUser() != null) {
-                    for (Conversacion conversacion : instance.getUser().getConversaciones()) {
-                        MensajeriaP2P.getInstance().enviarMensaje(conversacion, "", false);
-                    }
-
+                    instance.cerrarSesion();
                 }
             }
         });
@@ -84,6 +81,7 @@ public class MensajeriaP2P {
     public boolean iniciarUsuario(String usuario, String puerto) {
         try {
             if (verificarPuerto(InetAddress.getLocalHost().getHostAddress(),Integer.parseInt(puerto))) {
+                System.out.println("El puerto paso la validacion");
                 UsuarioLogueado usuarioLogueado = new UsuarioLogueado(usuario, InetAddress.getLocalHost().getHostAddress(), Integer.parseInt(puerto));
                 this.usuarioLogueado = usuarioLogueado;
                 new Thread(new HandlerMensajes(usuarioLogueado)).start();
@@ -142,9 +140,8 @@ public class MensajeriaP2P {
      * @return true si el contacto se agrega correctamente, false en caso contrario.
      */
     public boolean agendarContacto(String nickname, String ip, int puerto) {
-        if (!contactoDeSiMismo(ip, puerto) &&  validarPuertoContacto(ip, puerto)) {
+        if (!contactoDeSiMismo(ip, puerto) && validarPuertoContacto(ip, puerto)) {
             Usuario newUsuario = new Usuario(nickname, ip, puerto);
-            System.out.println(usuarioLogueado);
             usuarioLogueado.agregarContacto(newUsuario);
             return true;
         }
@@ -173,8 +170,7 @@ public class MensajeriaP2P {
      * @return true si el puerto está escuchando, false en caso contrario.
      */
     public boolean validarPuertoContacto(String ip, int puerto) {
-        try {
-            Socket socket = new Socket(ip, puerto);
+        try (Socket socket = new Socket(ip, puerto)) {
             return true;
         } catch (IOException ex) {
             return false;
@@ -258,6 +254,7 @@ public class MensajeriaP2P {
             MensajeriaP2P.getInstance().getVistaInicio().actualizarListaConversaciones();
             MensajeriaP2P.getInstance().getVistaInicio().actualizarPanelChat(c);
         }
+
     }
 
     /**
@@ -278,5 +275,12 @@ public class MensajeriaP2P {
         }
 
         return usuario;
+    }
+
+    public void cerrarSesion() {
+        for (Conversacion conversacion : instance.getUser().getConversaciones()) {
+            MensajeriaP2P.getInstance().enviarMensaje(conversacion, "", false);
+        }
+
     }
 }

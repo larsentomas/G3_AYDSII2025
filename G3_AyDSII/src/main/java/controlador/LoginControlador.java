@@ -32,7 +32,6 @@ public class LoginControlador implements ActionListener {
             String puerto = vistaLogin.getPuerto();
 
             if (sistema.iniciarUsuario(usuario, puerto))  {
-                sistema.iniciarUsuario(usuario, puerto);
                 vistaInicio.setVisible(true);
                 vistaLogin.setVisible(false);
                 this.vistaInicio.setBienvenida(usuario);

@@ -21,8 +21,7 @@ public class HandlerMensajes implements Runnable {
                 new Thread(new ReceptorMensajes(socket, this.usuarioLogueado)).start();
             }
         } catch (IOException e) {
-            System.out.println("Puerto valido pero problema creando el MessageHandler, se lanzo IOException");
-            //e.printStackTrace();
+            System.out.println(e.getMessage());
         }
     }
 }
