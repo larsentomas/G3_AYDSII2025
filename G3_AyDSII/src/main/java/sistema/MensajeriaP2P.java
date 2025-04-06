@@ -11,7 +11,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.net.*;
-import java.sql.SQLOutput;
 
 public class MensajeriaP2P {
     private static MensajeriaP2P instance = null;
@@ -21,6 +20,14 @@ public class MensajeriaP2P {
     static LoginControlador controladorLogin = null;
     static Controlador controlador = null;
 
+    /**
+     * Metodo principal que inicia la aplicación de mensajería P2P.
+     * <p>
+     * Este metodo crea una instancia de `MensajeriaP2P`, inicializa el controlador de login y
+     * el controlador principal, y agrega un listener para manejar el cerrar la ventana.
+     *
+     * @param args Argumentos de ejecución
+     */
     public static void main(String[] args){
         instance = MensajeriaP2P.getInstance();
 
@@ -38,22 +45,22 @@ public class MensajeriaP2P {
                 }
             }
         });
-
     }
-
-    // Constructores
 
     private MensajeriaP2P() {
     }
 
+    /**
+     * Devuelve el singleton de `MensajeriaP2P`.
+     *
+     * @return instancia de `MensajeriaP2P`.
+     */
     public static MensajeriaP2P getInstance() {
         if (instance == null) {
             instance = new MensajeriaP2P();
         }
         return instance;
     }
-
-    // Getter y setters
 
     public VistaInicio getVistaInicio() {
         return this.vistaInicio;
@@ -63,6 +70,17 @@ public class MensajeriaP2P {
         return usuarioLogueado;
     }
 
+    /**
+     * Inicializa el usuario logueado, con el nombre de usuario y el puerto proporcionados.
+     * <p>
+     * El metodo verifica que el puerto ingresado esté disponible. Si lo está, se crea una nueva
+     * instancia de `UsuarioLogueado` con el nombre de usuario y puerto proporcionados,
+     * e inicia un nuevo hilo para manejar los mensajes entrantes.
+     *
+     * @param usuario Nickname del usuario
+     * @param puerto Puerto del usuario
+     * @return true si el usuario se inicializa correctamente, false en caso contrario.
+     */
     public boolean iniciarUsuario(String usuario, String puerto) {
         try {
             if (verificarPuerto(InetAddress.getLocalHost().getHostAddress(),Integer.parseInt(puerto))) {
@@ -78,24 +96,51 @@ public class MensajeriaP2P {
         return false;
     }
 
-    // Esta es solo para verficiar el puerto del usuario cuando inicia sesion
+    /**
+     * Verifica si el puerto está disponible para enlazar.
+     *
+     * Este metodo intenta crear un `ServerSocket` en la dirección IP y puerto especificados.
+     * Si la operación tiene éxito, significa que el puerto está disponible.
+     * Si se lanza una excepción, significa que el puerto ya está en uso o no es enlazable.
+     *
+     * @param ip La dirección IP a verificar.
+     * @param port El número de puerto a verificar.
+     * @return true si el puerto está disponible, false en caso contrario.
+     */
     public boolean verificarPuerto(String ip, int port) {
         try (ServerSocket serverSocket = new ServerSocket()) {
             InetSocketAddress direccion = new InetSocketAddress(InetAddress.getByName(ip), port);
             serverSocket.setReuseAddress(true);
             serverSocket.bind(direccion);
-            return true; // It's available for binding
+            return true;
         } catch (IOException e) {
-            return false; // Something is already using it, or it's not bindable
+            return false;
         }
     }
 
-    // Metodos de la clase
-
+    /**
+     * Crea una nueva conversación con el usuario especificado.
+     *
+     * @param usuario El usuario con el que se desea crear la conversación.
+     * @return La nueva conversación creada.
+     */
     public Conversacion crearConversacion(Usuario usuario) {
         return usuarioLogueado.crearConversacion(usuario);
     }
 
+    /**
+     * Agrega un nuevo contacto a la lista de contactos del usuario logueado.
+     *
+     * Este metodo verifica si el contacto no es el mismo usuario logueado,
+     * y que el puerto proporcionado esté escuchando.
+     * Si ambas condiciones se cumplen, se crea un nuevo objeto `Usuario`,
+     * y se agrega a los contactos del usuario logueado.
+     *
+     * @param nickname El nickname del nuevo contacto.
+     * @param ip La dirección IP del nuevo contacto.
+     * @param puerto El puerto del nuevo contacto.
+     * @return true si el contacto se agrega correctamente, false en caso contrario.
+     */
     public boolean agendarContacto(String nickname, String ip, int puerto) {
         if (!contactoDeSiMismo(ip, puerto) &&  validarPuertoContacto(ip, puerto)) {
             Usuario newUsuario = new Usuario(nickname, ip, puerto);
@@ -106,10 +151,27 @@ public class MensajeriaP2P {
         return false;
     }
 
+    /**
+     * Verifica si el contacto es el mismo usuario logueado.
+     *
+     * @param ip La dirección IP del contacto.
+     * @param puerto El puerto del contacto.
+     * @return true si el contacto es el mismo usuario logueado, false en caso contrario.
+     */
     public boolean contactoDeSiMismo(String ip, int puerto) {
         return ip.equalsIgnoreCase(this.getUser().getIp()) && puerto == this.getUser().getPuerto();
     }
 
+    /**
+     * Verifica si el puerto especificado está escuchando.
+     *
+     * Este metodo intenta crear un `Socket` en la dirección IP y puerto especificados.
+     * Si la operación tiene éxito, significa que el puerto está escuchando.
+     *
+     * @param ip La dirección IP a verificar.
+     * @param puerto El número de puerto a verificar.
+     * @return true si el puerto está escuchando, false en caso contrario.
+     */
     public boolean validarPuertoContacto(String ip, int puerto) {
         try {
             Socket socket = new Socket(ip, puerto);
@@ -119,6 +181,17 @@ public class MensajeriaP2P {
         }
     }
 
+    /**
+     * Envía un mensaje a la conversación especificada.
+     *
+     * Este metodo crea un nuevo objeto `Mensaje` con el contenido proporcionado,
+     * y lo envía a través de un nuevo hilo utilizando la clase `EmisorMensajes`.
+     * Si la conversación no está activa, se marca el mensaje como no activo.
+     *
+     * @param c La conversación a la que se desea enviar el mensaje.
+     * @param mensaje El contenido del mensaje a enviar.
+     * @param esActiva Indica si la conversación está activa o no.
+     */
     public void enviarMensaje(Conversacion c, String mensaje, boolean esActiva) {
         Mensaje m;
         if (!esActiva) {
@@ -136,6 +209,16 @@ public class MensajeriaP2P {
         }
     }
 
+    /**
+     * Recibe un mensaje y lo agrega a la conversación correspondiente.
+     *
+     * Este metodo realiza las siguientes acciones cuando se recibe un mensaej:
+     * Si la conversacion no existe, la crea y envia el mensaje
+     * Si la conversacion es activa se agrega el mensaje a la conversación.
+     * Si no está activa, se desactiva la conversación correspondiente.
+     *
+     * @param mensajito El mensaje recibido.
+     */
     public void recibirMensaje(Mensaje mensajito) {
         Conversacion c = null;
 
@@ -177,6 +260,13 @@ public class MensajeriaP2P {
         }
     }
 
+    /**
+     * Verifica si el usuario existe en la lista de contactos del usuario logueado.
+     *
+     * @param ip La dirección IP del usuario a verificar.
+     * @param puerto El puerto del usuario a verificar.
+     * @return El objeto `Usuario` si existe, null en caso contrario.
+     */
     public Usuario existeUsuario(String ip, int puerto) {
         Usuario usuario = null;
 
