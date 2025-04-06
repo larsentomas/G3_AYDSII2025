@@ -35,7 +35,7 @@ public class LoginControlador implements ActionListener {
                 sistema.iniciarUsuario(usuario, puerto);
                 vistaInicio.setVisible(true);
                 vistaLogin.setVisible(false);
-                this.vistaInicio.setBienvenida("Bienvenido " + usuario);
+                this.vistaInicio.setBienvenida(usuario);
             } else {
                 vistaLogin.mostrarModalError("Error al iniciar sesion");
             }

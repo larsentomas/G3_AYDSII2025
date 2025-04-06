@@ -103,7 +103,9 @@ public class MensajeriaP2P {
         }
     }
 
-    public 
+    public boolean contactoDeSiMismo(String ip, int port) {
+        return ip.equalsIgnoreCase(this.usuarioLo)
+    }
 
     public void validarPuertoContacto(String ip, int puerto) {
         System.out.println("Verificando: " + ip + ":" + puerto);
