@@ -1,4 +1,3 @@
-// VistaInicio.java
 package vista;
 
 import modelo.Usuario;
@@ -10,8 +9,8 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 
 public class VistaInicio extends JFrame implements IVistaInicio {
@@ -29,11 +28,12 @@ public class VistaInicio extends JFrame implements IVistaInicio {
     private JList listaConversaciones;
     private DefaultListModel<Conversacion> listModelConversaciones;
     private Conversacion conversacion;
+    private JPanel panel_chat;
 
     public VistaInicio() {
         // Initialize componente
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setBounds(100, 100, 1200, 800);
+        setBounds(200, 0, 1200, 800);
         contentPane = new JPanel();
         contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 
@@ -47,6 +47,7 @@ public class VistaInicio extends JFrame implements IVistaInicio {
         JPanel panel_Conversaciones = new JPanel();
         panel_central.add(panel_Conversaciones);
         panel_Conversaciones.setLayout(new BorderLayout(0, 0));
+        panel_Conversaciones.setPreferredSize(new Dimension(400, 600));
 
         this.listModelConversaciones = new DefaultListModel<>();
         this.listaConversaciones = new JList<>(listModelConversaciones);
@@ -61,12 +62,12 @@ public class VistaInicio extends JFrame implements IVistaInicio {
         });
         panel_Conversaciones.add(this.listaConversaciones);
 
-        JPanel panel_chat = new JPanel();
-        panel_central.add(panel_chat, BorderLayout.EAST);
-        panel_chat.setLayout(new BorderLayout(0, 0));
-
+        this.panel_chat = new JPanel();
+        panel_central.add(this.panel_chat, BorderLayout.EAST);
+        this.panel_chat.setLayout(new BorderLayout(0, 0));
+        this.panel_chat.setPreferredSize(new Dimension(800, 500));
         JPanel chat = new JPanel();
-        panel_chat.add(chat, BorderLayout.CENTER);
+        this.panel_chat.add(chat, BorderLayout.CENTER);
         chat.setLayout(new BorderLayout(0, 0));
 
         this.lista_chat = new List();
@@ -74,7 +75,7 @@ public class VistaInicio extends JFrame implements IVistaInicio {
         chat.add(this.lista_chat);
 
         JPanel acciones = new JPanel();
-        panel_chat.add(acciones, BorderLayout.SOUTH);
+        this.panel_chat.add(acciones, BorderLayout.SOUTH);
 
         this.txtf_mensaje = new TextField();
         this.txtf_mensaje.setColumns(30);
@@ -109,6 +110,27 @@ public class VistaInicio extends JFrame implements IVistaInicio {
 
         this.btnBuscar = new JButton("buscar");
         panel_norte.add(this.btnBuscar);
+
+        // Desactivar el botón de enviar por defecto
+        btnEnviar.setEnabled(false);
+
+        // Habilitar/deshabilitar el botón de enviar según el contenido del mensaje
+        txtf_mensaje.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyReleased(KeyEvent e) {
+                // Habilitar el botón de enviar si el campo no está vacío, deshabilitar si está vacío
+                if (txtf_mensaje.getText().isEmpty()) {
+                    btnEnviar.setEnabled(false);
+                } else {
+                    btnEnviar.setEnabled(true);
+                }
+            }
+        });
+
+        // Verificar si el TextField está vacío en la inicialización
+        if (txtf_mensaje.getText().isEmpty()) {
+            btnEnviar.setEnabled(false);
+        }
     }
 
     @Override
@@ -129,11 +151,18 @@ public class VistaInicio extends JFrame implements IVistaInicio {
     public void limpiarcampos() {
         this.txtf_buscar.setText("");
         this.txtf_mensaje.setText("");
+        // Desactivar el botón de enviar cuando se limpian los campos
+        btnEnviar.setEnabled(false);
+    }
+
+    @Override
+    public void setPanelchat(boolean estado) {
+        this.panel_chat.setVisible(estado);
     }
 
     // Manejo de conversaciones
-
     public void actualizarPanelChat(Conversacion conversacion) {
+        this.panel_chat.setVisible(true);
         lista_chat.removeAll();
         Usuario usuarioAgendado = MensajeriaP2P.getInstance().existeUsuario(conversacion.getUsuario().getIp(), conversacion.getUsuario().getPuerto());
         for (Mensaje mensaje : conversacion.getMensajes()) {
@@ -142,8 +171,16 @@ public class VistaInicio extends JFrame implements IVistaInicio {
         lista_chat.revalidate();
         lista_chat.repaint();
         setConversacion(conversacion);
+        // Si la conversación está activa, habilitar el botón de enviar y el campo de texto
         btnEnviar.setEnabled(conversacion.isActiva());
         txtf_mensaje.setEnabled(conversacion.isActiva());
+
+        // Si no hay conversaciones activas, deshabilitar el panel de chat
+        if (conversacion == null || !conversacion.isActiva()) {
+            panel_chat.setVisible(false);
+        } else {
+            panel_chat.setVisible(true);
+        }
     }
 
     public void actualizarListaConversaciones() {
@@ -152,7 +189,6 @@ public class VistaInicio extends JFrame implements IVistaInicio {
             listModelConversaciones.addElement(conversacion);
         }
     }
-
 
     // Getters y Setters
     public JButton getBtnNuevoContacto() {
@@ -179,9 +215,7 @@ public class VistaInicio extends JFrame implements IVistaInicio {
         this.conversacion = conversacion;
     }
 
-
     // Modales
-
     public Usuario mostrarModalNuevaConversacion() {
         ArrayList<Usuario> contactosSinConversacion = MensajeriaP2P.getInstance().getUser().getContactosSinConversacion();
         Usuario[] opciones = contactosSinConversacion.toArray(new Usuario[0]);
@@ -218,6 +252,4 @@ public class VistaInicio extends JFrame implements IVistaInicio {
     public void mostrarModalError(String s) {
         JOptionPane.showMessageDialog(this, s, "Error", JOptionPane.ERROR_MESSAGE);
     }
-
 }
-

@@ -24,6 +24,7 @@ public class Controlador implements ActionListener  {
         this.vista_inicio.getBtnNuevoContacto().addActionListener(this);
         this.vista_inicio.getEnviarMensaje().setActionCommand("ENVIAR_MENSAJE");
         this.vista_inicio.getEnviarMensaje().addActionListener(this);
+        this.vista_inicio.setPanelchat(false);
     }
 
     @Override
