@@ -140,11 +140,17 @@ public class VistaInicio extends JFrame implements IVistaInicio {
         }
 
         // Agregar un ListSelectionListener para restablecer el color cuando se selecciona el elemento
+
         listaConversaciones.addListSelectionListener(e -> {
             if (!e.getValueIsAdjusting()) {
-                listaConversaciones.setSelectionBackground(UIManager.getColor("List.selectionBackground"));
-                listaConversaciones.setSelectionForeground(UIManager.getColor("List.selectionForeground"));
-                listaConversaciones.setBorder(UIManager.getBorder("List.border"));
+                int selectedIndex = listaConversaciones.getSelectedIndex();
+                if (selectedIndex != -1) {
+                    Conversacion selectedConversacion = listModelConversaciones.getElementAt(selectedIndex);
+                    // Actualizar el estado de la conversación para que no se muestre en rojo
+                    selectedConversacion.setNotificado(false);
+                    // Forzar la renderización de la lista
+                    listaConversaciones.repaint();
+                }
             }
         });
 
@@ -228,10 +234,14 @@ public class VistaInicio extends JFrame implements IVistaInicio {
                 component.setBackground(Color.BLUE);
                 component.setForeground(Color.WHITE);
                 ((JComponent) component).setBorder(null);
-            } else {
+            } else if (conversacion.isNotificado()) {
                 component.setBackground(list.getBackground());
                 component.setForeground(list.getForeground());
                 ((JComponent) component).setBorder(BorderFactory.createLineBorder(Color.RED, 2));
+            } else {
+                component.setBackground(list.getBackground());
+                component.setForeground(list.getForeground());
+                ((JComponent) component).setBorder(null);
             }
             return component;
         }

@@ -6,6 +6,8 @@ import java.util.ArrayList;
 public class Conversacion implements Serializable {
     private Usuario usuario;
     private boolean activa;
+    private boolean notificado;
+
 
     private ArrayList<Mensaje> mensajes;
 
@@ -16,11 +18,20 @@ public class Conversacion implements Serializable {
     }
 
     public void agregarMensaje(Mensaje mensaje) {
+        this.setNotificado(true);
         mensajes.add(mensaje);
+    }
+
+    public boolean isNotificado() {
+        return notificado;
     }
 
     public ArrayList<Mensaje> getMensajes() {
         return mensajes;
+    }
+
+    public void setNotificado(boolean notificado) {
+        this.notificado = notificado;
     }
 
     public Usuario getUsuario() {

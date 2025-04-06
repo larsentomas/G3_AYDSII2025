@@ -21,8 +21,6 @@ public class ReceptorMensajes implements Runnable {
         try (ObjectInputStream in = new ObjectInputStream(socket.getInputStream())) {
             try {
                 Mensaje mensajito = (Mensaje) in.readObject();
-                System.out.println("Se leyo el mensaje " + mensajito);
-
                 MensajeriaP2P.getInstance().recibirMensaje(mensajito);
 
             } catch (ClassNotFoundException e) {

@@ -111,12 +111,10 @@ public class MensajeriaP2P {
     }
 
     public boolean validarPuertoContacto(String ip, int puerto) {
-        System.out.println("Verificando: " + ip + ":" + puerto);
         try {
             Socket socket = new Socket(ip, puerto);
             return true;
         } catch (IOException ex) {
-            System.out.println(ex.getMessage());
             return false;
         }
     }
@@ -161,11 +159,7 @@ public class MensajeriaP2P {
             c.agregarMensaje(mensajito);
             MensajeriaP2P.getInstance().getVistaInicio().actualizarListaConversaciones();
             if (MensajeriaP2P.getInstance().getVistaInicio().getConversacionActiva() == c) {
-                System.out.println("Conversacion activa");
                 MensajeriaP2P.getInstance().getVistaInicio().actualizarPanelChat(c);
-            } else {
-                System.out.println("Conversacion no activa");
-                MensajeriaP2P.getInstance().getVistaInicio().Notificar(c);
             }
         } else {
             // Desactivar conversacion

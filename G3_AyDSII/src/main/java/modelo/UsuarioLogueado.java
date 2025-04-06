@@ -65,6 +65,7 @@ public class UsuarioLogueado extends Usuario implements Serializable {
     public Conversacion crearConversacion(Usuario usuario) {
         Conversacion conversacion = new Conversacion(usuario);
         this.agregarConversacion(conversacion);
+        conversacion.setNotificado(true);
         return conversacion;
     }
 
