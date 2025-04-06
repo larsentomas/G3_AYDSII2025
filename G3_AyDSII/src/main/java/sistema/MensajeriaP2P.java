@@ -11,6 +11,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.net.*;
+import java.sql.SQLOutput;
 
 public class MensajeriaP2P {
     private static MensajeriaP2P instance = null;
@@ -95,35 +96,46 @@ public class MensajeriaP2P {
         return usuarioLogueado.crearConversacion(usuario);
     }
 
-    public void agendarContacto(String nickname, String ip, int puerto) {
-        if (!contactoDeSiMismo(ip, port)) {
-            validarPuertoContacto(ip, puerto);
+    public boolean agendarContacto(String nickname, String ip, int puerto) {
+        if (!contactoDeSiMismo(ip, puerto) &&  validarPuertoContacto(ip, puerto)) {
             Usuario newUsuario = new Usuario(nickname, ip, puerto);
+            System.out.println(usuarioLogueado);
             usuarioLogueado.agregarContacto(newUsuario);
+            return true;
         }
+        return false;
     }
 
-    public boolean contactoDeSiMismo(String ip, int port) {
-        return ip.equalsIgnoreCase(this.usuarioLo)
+    public boolean contactoDeSiMismo(String ip, int puerto) {
+        return ip.equalsIgnoreCase(this.getUser().getIp()) && puerto == this.getUser().getPuerto();
     }
 
-    public void validarPuertoContacto(String ip, int puerto) {
+    public boolean validarPuertoContacto(String ip, int puerto) {
         System.out.println("Verificando: " + ip + ":" + puerto);
         try {
             Socket socket = new Socket(ip, puerto);
+            return true;
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
+            return false;
         }
     }
 
     public void enviarMensaje(Conversacion c, String mensaje, boolean esActiva) {
         Mensaje m;
-        if (!esActiva)  m = new Mensaje(usuarioLogueado, mensaje, false);
-        else m = new Mensaje(usuarioLogueado, mensaje);
+        if (!esActiva) {
+            m = new Mensaje(usuarioLogueado, mensaje, false);
+        } else {
+            m = new Mensaje(usuarioLogueado, mensaje);
+        }
 
-        new Thread(new EmisorMensajes(c.getUsuario().getIp(), c.getUsuario().getPuerto(), m)).start();
-        c.agregarMensaje(m);
-        MensajeriaP2P.getInstance().getVistaInicio().actualizarPanelChat(c);
+        try {
+            new Thread(new EmisorMensajes(c.getUsuario().getIp(), c.getUsuario().getPuerto(), m)).start();
+            c.agregarMensaje(m);
+            MensajeriaP2P.getInstance().getVistaInicio().actualizarPanelChat(c);
+        } catch (Exception e) {
+            MensajeriaP2P.getInstance().getVistaInicio().mostrarModalError("No se pudo enviar el mensaje: ");
+        }
     }
 
     public void recibirMensaje(Mensaje mensajito) {
@@ -147,10 +159,12 @@ public class MensajeriaP2P {
                 }
             }
             c.agregarMensaje(mensajito);
+            MensajeriaP2P.getInstance().getVistaInicio().actualizarListaConversaciones();
             if (MensajeriaP2P.getInstance().getVistaInicio().getConversacionActiva() == c) {
-                MensajeriaP2P.getInstance().getVistaInicio().actualizarListaConversaciones();
+                System.out.println("Conversacion activa");
                 MensajeriaP2P.getInstance().getVistaInicio().actualizarPanelChat(c);
             } else {
+                System.out.println("Conversacion no activa");
                 MensajeriaP2P.getInstance().getVistaInicio().Notificar(c);
             }
         } else {

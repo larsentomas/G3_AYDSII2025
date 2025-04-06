@@ -73,7 +73,9 @@ public class Controlador implements ActionListener  {
                 String ip = contactoInfo[1];
                 String puerto = contactoInfo[2];
 
-                sistema.agendarContacto(nickname, ip, Integer.parseInt(puerto));
+                if (!sistema.agendarContacto(nickname, ip, Integer.parseInt(puerto))) {
+                    vista_inicio.mostrarModalError("Error al agregar contacto");
+                }
             }
         }
 

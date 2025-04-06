@@ -147,6 +147,8 @@ public class VistaInicio extends JFrame implements IVistaInicio {
                 listaConversaciones.setBorder(UIManager.getBorder("List.border"));
             }
         });
+
+        this.listaConversaciones.setCellRenderer(new CustomListCellRenderer());
     }
 
     @Override
@@ -165,6 +167,7 @@ public class VistaInicio extends JFrame implements IVistaInicio {
 
     @Override
     public void limpiarcampos() {
+
         this.txtf_mensaje.setText("");
         // Desactivar el botón de enviar cuando se limpian los campos
         btnEnviar.setEnabled(false);
@@ -181,7 +184,7 @@ public class VistaInicio extends JFrame implements IVistaInicio {
         lista_chat.removeAll();
         Usuario usuarioAgendado = MensajeriaP2P.getInstance().existeUsuario(conversacion.getUsuario().getIp(), conversacion.getUsuario().getPuerto());
         for (Mensaje mensaje : conversacion.getMensajes()) {
-            lista_chat.add("[" + mensaje.getTimestamp().getTime() + "]" + usuarioAgendado.getNickname() + ":" + mensaje.toString());
+            lista_chat.add("[" + mensaje.getTimestamp().getTime() + "]" + usuarioAgendado.getNickname() + ":\n" + mensaje.toString());
         }
         lista_chat.revalidate();
         lista_chat.repaint();
@@ -204,6 +207,7 @@ public class VistaInicio extends JFrame implements IVistaInicio {
             listModelConversaciones.addElement(conversacion);
         }
     }
+    /*
     //Change the border color of the element in the list
     public void Notificar(Conversacion c) {
         int index = listModelConversaciones.indexOf(c);
@@ -212,6 +216,31 @@ public class VistaInicio extends JFrame implements IVistaInicio {
             listaConversaciones.setSelectionForeground(Color.WHITE);
             listaConversaciones.setSelectedIndex(index);
             listaConversaciones.setBorder(BorderFactory.createLineBorder(Color.RED, 2));
+        }
+    }
+    */
+    private class CustomListCellRenderer extends DefaultListCellRenderer {
+        @Override
+        public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+            Component component = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+            Conversacion conversacion = (Conversacion) value;
+            if (isSelected || MensajeriaP2P.getInstance().getVistaInicio().getConversacionActiva() == conversacion) {
+                component.setBackground(Color.BLUE);
+                component.setForeground(Color.WHITE);
+                ((JComponent) component).setBorder(null);
+            } else {
+                component.setBackground(list.getBackground());
+                component.setForeground(list.getForeground());
+                ((JComponent) component).setBorder(BorderFactory.createLineBorder(Color.RED, 2));
+            }
+            return component;
+        }
+    }
+
+    public void Notificar(Conversacion c) {
+        int index = listModelConversaciones.indexOf(c);
+        if (index != -1) {
+            listaConversaciones.setSelectedIndex(index);
         }
     }
 
@@ -280,7 +309,7 @@ public class VistaInicio extends JFrame implements IVistaInicio {
     }
 
     public void setBienvenida(String nombre) {
-        this.lblCartelBienvenida = new JLabel("Bienvenido/a " + nombre);
+        this.lblCartelBienvenida.setText("Bienvenido/a  "+ nombre);
        // this.lblCartelBienvenida.setFont(new Font("Arial", Font.BOLD, 20));
        // this.lblCartelBienvenida.setForeground(Color.BLUE);
     }
