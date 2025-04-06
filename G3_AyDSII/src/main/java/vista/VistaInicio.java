@@ -9,6 +9,7 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionListener;
+import java.awt.event.ContainerEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
@@ -29,6 +30,7 @@ public class VistaInicio extends JFrame implements IVistaInicio {
     private DefaultListModel<Conversacion> listModelConversaciones;
     private Conversacion conversacion;
     private JPanel panel_chat;
+    private JLabel lblCartelBienvenida;
 
     public VistaInicio() {
         // Initialize componente
@@ -102,6 +104,10 @@ public class VistaInicio extends JFrame implements IVistaInicio {
 
         JPanel panel_norte = new JPanel();
         contentPane.add(panel_norte, BorderLayout.NORTH);
+        this.lblCartelBienvenida = new JLabel("Bienvenido/a");
+        panel_norte.add(this.lblCartelBienvenida);
+
+        /**
 
         this.txtf_buscar = new JTextField();
         this.txtf_buscar.setText("a quien buscas?");
@@ -110,6 +116,7 @@ public class VistaInicio extends JFrame implements IVistaInicio {
 
         this.btnBuscar = new JButton("buscar");
         panel_norte.add(this.btnBuscar);
+    */
 
         // Desactivar el botón de enviar por defecto
         btnEnviar.setEnabled(false);
@@ -131,6 +138,15 @@ public class VistaInicio extends JFrame implements IVistaInicio {
         if (txtf_mensaje.getText().isEmpty()) {
             btnEnviar.setEnabled(false);
         }
+
+        // Agregar un ListSelectionListener para restablecer el color cuando se selecciona el elemento
+        listaConversaciones.addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting()) {
+                listaConversaciones.setSelectionBackground(UIManager.getColor("List.selectionBackground"));
+                listaConversaciones.setSelectionForeground(UIManager.getColor("List.selectionForeground"));
+                listaConversaciones.setBorder(UIManager.getBorder("List.border"));
+            }
+        });
     }
 
     @Override
@@ -149,7 +165,6 @@ public class VistaInicio extends JFrame implements IVistaInicio {
 
     @Override
     public void limpiarcampos() {
-        this.txtf_buscar.setText("");
         this.txtf_mensaje.setText("");
         // Desactivar el botón de enviar cuando se limpian los campos
         btnEnviar.setEnabled(false);
@@ -185,12 +200,23 @@ public class VistaInicio extends JFrame implements IVistaInicio {
 
     public void actualizarListaConversaciones() {
         listModelConversaciones.clear();
-        for (Conversacion conversacion : MensajeriaP2P.getInstance().getUser().getConversaciones()) {
+        for (Conversacion conversacion : MensajeriaP2P.getInstance().getUser().getConversacionesActivas()) {
             listModelConversaciones.addElement(conversacion);
         }
     }
+    //Change the border color of the element in the list
+    public void Notificar(Conversacion c) {
+        int index = listModelConversaciones.indexOf(c);
+        if (index != -1) {
+            listaConversaciones.setSelectionBackground(Color.BLUE);
+            listaConversaciones.setSelectionForeground(Color.WHITE);
+            listaConversaciones.setSelectedIndex(index);
+            listaConversaciones.setBorder(BorderFactory.createLineBorder(Color.RED, 2));
+        }
+    }
 
-    // Getters y Setters
+
+                          // Getters y Setters
     public JButton getBtnNuevoContacto() {
         return btnAgregarContacto;
     }
@@ -251,5 +277,11 @@ public class VistaInicio extends JFrame implements IVistaInicio {
 
     public void mostrarModalError(String s) {
         JOptionPane.showMessageDialog(this, s, "Error", JOptionPane.ERROR_MESSAGE);
+    }
+
+    public void setBienvenida(String nombre) {
+        this.lblCartelBienvenida = new JLabel("Bienvenido/a " + nombre);
+       // this.lblCartelBienvenida.setFont(new Font("Arial", Font.BOLD, 20));
+       // this.lblCartelBienvenida.setForeground(Color.BLUE);
     }
 }

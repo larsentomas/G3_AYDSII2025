@@ -7,4 +7,5 @@ public interface IVistaInicio {
     public void setVisibleVentana(boolean estado);
     public void limpiarcampos();
     public void setPanelchat(boolean estado);
+    public void setBienvenida(String nombre);
 }

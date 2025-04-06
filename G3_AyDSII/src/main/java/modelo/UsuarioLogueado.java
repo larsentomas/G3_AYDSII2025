@@ -1,6 +1,7 @@
 package modelo;
 
 import java.io.Serializable;
+import java.sql.Array;
 import java.util.ArrayList;
 
 public class UsuarioLogueado extends Usuario implements Serializable {
@@ -28,6 +29,16 @@ public class UsuarioLogueado extends Usuario implements Serializable {
 
     public ArrayList<Conversacion> getConversaciones() {
         return conversaciones;
+    }
+
+    public ArrayList<Conversacion> getConversacionesActivas() {
+        ArrayList<Conversacion> convActivas = new ArrayList<>();
+        for (Conversacion c: conversaciones) {
+            if (c.isActiva()) {
+                convActivas.add(c);
+            }
+        }
+        return convActivas;
     }
 
     public ArrayList<Usuario> getContactosSinConversacion() {

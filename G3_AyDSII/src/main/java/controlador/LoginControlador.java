@@ -31,15 +31,14 @@ public class LoginControlador implements ActionListener {
             String usuario = vistaLogin.getUser();
             String puerto = vistaLogin.getPuerto();
 
-            try {
+            if (sistema.iniciarUsuario(usuario, puerto))  {
                 sistema.iniciarUsuario(usuario, puerto);
-            } catch (Exception ex) {
-                vistaLogin.mostrarModalError("Error al iniciar sesión: " + ex.getMessage());
-                return;
+                vistaInicio.setVisible(true);
+                vistaLogin.setVisible(false);
+                this.vistaInicio.setBienvenida("Bienvenido " + usuario);
+            } else {
+                vistaLogin.mostrarModalError("Error al iniciar sesion");
             }
-
-            vistaInicio.setVisible(true);
-            vistaLogin.setVisible(false);
         }
     }
 }

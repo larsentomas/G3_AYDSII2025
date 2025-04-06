@@ -6,12 +6,12 @@ import java.io.IOException;
 import java.net.Socket;
 import java.io.ObjectInputStream;
 
-public class EnviadorMensajes implements Runnable {
+public class ReceptorMensajes implements Runnable {
 
     private Socket socket;
     private UsuarioLogueado usuarioLogueado;
 
-    public EnviadorMensajes(Socket socket, UsuarioLogueado usuarioLogueado) {
+    public ReceptorMensajes(Socket socket, UsuarioLogueado usuarioLogueado) {
         this.socket = socket;
         this.usuarioLogueado = usuarioLogueado;
     }

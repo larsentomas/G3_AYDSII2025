@@ -7,6 +7,7 @@ import vista.VistaInicio;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 
 public class Controlador implements ActionListener  {
     private VistaInicio vista_inicio;
@@ -25,6 +26,7 @@ public class Controlador implements ActionListener  {
         this.vista_inicio.getEnviarMensaje().setActionCommand("ENVIAR_MENSAJE");
         this.vista_inicio.getEnviarMensaje().addActionListener(this);
         this.vista_inicio.setPanelchat(false);
+
     }
 
     @Override
@@ -70,6 +72,7 @@ public class Controlador implements ActionListener  {
                 String nickname = contactoInfo[0];
                 String ip = contactoInfo[1];
                 String puerto = contactoInfo[2];
+
                 sistema.agendarContacto(nickname, ip, Integer.parseInt(puerto));
             }
         }

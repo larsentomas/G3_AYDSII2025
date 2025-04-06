@@ -4,11 +4,11 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-public class ManejadorMensajes implements Runnable {
+public class HandlerMensajes implements Runnable {
 
     private UsuarioLogueado usuarioLogueado;
 
-    public ManejadorMensajes(UsuarioLogueado usuario) {
+    public HandlerMensajes(UsuarioLogueado usuario) {
         this.usuarioLogueado = usuario;
     }
 
@@ -18,10 +18,11 @@ public class ManejadorMensajes implements Runnable {
             System.out.println("Escuchando en el puerto " + usuarioLogueado.getPuerto() + "...");
             while (true) {
                 Socket socket = serverSocket.accept();
-                new Thread(new EnviadorMensajes(socket, this.usuarioLogueado)).start();
+                new Thread(new ReceptorMensajes(socket, this.usuarioLogueado)).start();
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("Puerto valido pero problema creando el MessageHandler, se lanzo IOException");
+            //e.printStackTrace();
         }
     }
 }
