@@ -213,6 +213,7 @@ public class VistaInicio extends JFrame implements IVistaInicio {
             listModelConversaciones.addElement(conversacion);
         }
     }
+
     /*
     //Change the border color of the element in the list
     public void Notificar(Conversacion c) {
@@ -280,6 +281,16 @@ public class VistaInicio extends JFrame implements IVistaInicio {
         this.conversacion = conversacion;
     }
 
+    public void setBienvenida(String nombre) {
+        this.lblCartelBienvenida.setText("Bienvenido/a  "+ nombre);
+        // this.lblCartelBienvenida.setFont(new Font("Arial", Font.BOLD, 20));
+        // this.lblCartelBienvenida.setForeground(Color.BLUE);
+    }
+
+    public JButton getBtnLoguout() {
+        return btnLoguout;
+    }
+
     // Modales
     public Usuario mostrarModalNuevaConversacion() {
         ArrayList<Usuario> contactosSinConversacion = MensajeriaP2P.getInstance().getUser().getContactosSinConversacion();
@@ -318,13 +329,7 @@ public class VistaInicio extends JFrame implements IVistaInicio {
         JOptionPane.showMessageDialog(this, s, "Error", JOptionPane.ERROR_MESSAGE);
     }
 
-    public void setBienvenida(String nombre) {
-        this.lblCartelBienvenida.setText("Bienvenido/a  "+ nombre);
-       // this.lblCartelBienvenida.setFont(new Font("Arial", Font.BOLD, 20));
-       // this.lblCartelBienvenida.setForeground(Color.BLUE);
-    }
-
-    public JButton getBtnLoguout() {
-        return btnLoguout;
+    public void mostrarModalExito(String contactoAgregadoExitosamente) {
+        JOptionPane.showMessageDialog(this, contactoAgregadoExitosamente, "Éxito", JOptionPane.INFORMATION_MESSAGE);
     }
 }

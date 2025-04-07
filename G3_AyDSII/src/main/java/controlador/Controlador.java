@@ -77,6 +77,8 @@ public class Controlador implements ActionListener  {
                 if (!sistema.agendarContacto(nickname, ip, Integer.parseInt(puerto))) {
                     vista_inicio.mostrarModalError("Error al agregar contacto");
                     vista_inicio.mostrarModalAgregarContacto();
+                } else {
+                    vista_inicio.mostrarModalExito("Contacto agregado exitosamente");
                 }
             }
         } else if (e.getActionCommand().equalsIgnoreCase("LOGOUT")) {

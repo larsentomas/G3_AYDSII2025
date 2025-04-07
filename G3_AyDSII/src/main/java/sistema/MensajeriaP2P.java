@@ -140,10 +140,19 @@ public class MensajeriaP2P {
      * @return true si el contacto se agrega correctamente, false en caso contrario.
      */
     public boolean agendarContacto(String nickname, String ip, int puerto) {
-        if (!contactoDeSiMismo(ip, puerto) && validarPuertoContacto(ip, puerto)) {
+        if (!contactoDeSiMismo(ip, puerto) && validarPuertoContacto(ip, puerto) && !contactoRepetido(ip, puerto)) {
             Usuario newUsuario = new Usuario(nickname, ip, puerto);
             usuarioLogueado.agregarContacto(newUsuario);
             return true;
+        }
+        return false;
+    }
+
+    private boolean contactoRepetido(String ip, int puerto) {
+        for (Usuario contacto : usuarioLogueado.getContactos()) {
+            if (contacto.getIp().equalsIgnoreCase(ip) && contacto.getPuerto() == puerto) {
+                return true;
+            }
         }
         return false;
     }
@@ -155,12 +164,12 @@ public class MensajeriaP2P {
      * @param puerto El puerto del contacto.
      * @return true si el contacto es el mismo usuario logueado, false en caso contrario.
      */
-    public boolean contactoDeSiMismo(String ip, int puerto) {
+    private boolean contactoDeSiMismo(String ip, int puerto) {
         return ip.equalsIgnoreCase(this.getUser().getIp()) && puerto == this.getUser().getPuerto();
     }
 
     /**
-     * Verifica si el puerto especificado está escuchando.
+     * Verifica si el puerto especificado este dentro del rango permitido y este escuchando.
      *
      * Este metodo intenta crear un `Socket` en la dirección IP y puerto especificados.
      * Si la operación tiene éxito, significa que el puerto está escuchando.
@@ -169,7 +178,8 @@ public class MensajeriaP2P {
      * @param puerto El número de puerto a verificar.
      * @return true si el puerto está escuchando, false en caso contrario.
      */
-    public boolean validarPuertoContacto(String ip, int puerto) {
+    private boolean validarPuertoContacto(String ip, int puerto) {
+        if (puerto < 0 || puerto > 65535) return false;
         try (Socket socket = new Socket(ip, puerto)) {
             return true;
         } catch (IOException ex) {
