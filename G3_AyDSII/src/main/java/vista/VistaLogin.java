@@ -54,7 +54,7 @@ public class VistaLogin extends JFrame implements ILogin{
 		JPanel panel_6 = new JPanel();
 		panel_centro.add(panel_6);
 		
-		JLabel lblNewLabel = new JLabel("usuario : ");
+		JLabel lblNewLabel = new JLabel("Usuario : ");
 		panel_6.add(lblNewLabel);
 		
 		JPanel panel_1 = new JPanel();
